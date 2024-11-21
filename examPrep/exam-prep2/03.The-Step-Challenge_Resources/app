@@ -61,9 +61,6 @@ function createRecordElement(name, steps, calories, recordId) {
         stepsInput.value = steps;
         caloriesInput.value = calories;
 
-        console.log(recordId);
-        
-
         editBtn.removeAttribute('disabled');
         editBtn.setAttribute('enabled', 'enabled');
 
@@ -151,5 +148,3 @@ function clearInputs() {
     stepsInput.value = '';
     caloriesInput.value = '';
 }
-
-// window.addEventListener('load', loadRecord);
