@@ -1,1 +1,132 @@
+const baseUrl = 'http://localhost:3030/jsonstore/tasks';
+const baseListCourse = document.querySelector('#progress-course div div')
 
+const loadBtn = document.getElementById('load-course');
+const addBtn = document.getElementById("add-course");
+const mainEditBtn = document.getElementById("edit-course");
+const formElement = document.querySelector('#form form');
+
+const list = document.getElementById('list');
+
+let titleInput = document.getElementById('course-name')
+let typeInput = document.getElementById('course-type')
+let descriptionInput = document.getElementById('description')
+let teacherInput = document.getElementById('teacher-name')
+
+async function loadCourse() {
+    // clear list
+    list.innerHTML = '';
+
+    // get request
+    const response = await fetch(baseUrl);
+    const result = await response.json();
+    const courses = Object.values(result);
+    console.log(courses);
+
+
+    courses.forEach((course) => {
+        const { description, teacher, title, type, _id } = course;
+
+        const clone = baseListCourse.cloneNode(true);
+
+        clone.querySelector('div h2').textContent = title;
+        clone.querySelector('div h3').textContent = teacher;
+        clone.querySelector('div h3').nextElementSibling.textContent = type;
+        clone.querySelector('div h4').textContent = description;
+
+        list.appendChild(clone);
+
+        const finishBtn = clone.querySelector('.container .finish-btn');
+        const editBtn = clone.querySelector('.container .edit-btn');
+        console.log(finishBtn);
+
+        finishBtn.addEventListener('click', async () => {
+            await fetch(baseUrl + '/' + _id, {
+                method: 'DELETE',
+            });
+
+            loadCourse();
+        });
+
+        editBtn.addEventListener('click', async () => {
+
+            titleInput.value = title;
+            teacherInput.value = teacher;
+            typeInput.value = type;
+            descriptionInput.value = description;
+
+            mainEditBtn.removeAttribute('disabled');
+            mainEditBtn.setAttribute('enabled', 'enabled');
+
+            addBtn.setAttribute('disabled', 'disabled');
+            addBtn.removeAttribute('enabled');
+
+             formElement.setAttribute('data-id', _id);
+        });
+
+    })
+}
+
+async function editCourse() {
+
+    const title = titleInput.value;
+    const teacher = teacherInput.value;
+    const type = typeInput.value;
+    const description = descriptionInput.value;
+
+    const _id = formElement.getAttribute('data-id');
+    
+    await fetch(baseUrl + '/' + _id, {
+        method: 'PUT',
+        body: JSON.stringify({
+            title,
+            teacher,
+            type,
+            description
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    loadCourse();
+
+    formElement.removeAttribute('data-id');
+
+    clearInputs();
+}
+
+async function addCourse() {
+
+    const title = titleInput.value;
+    const teacher = teacherInput.value;
+    const type = typeInput.value;
+    const description = descriptionInput.value;
+
+    clearInputs();
+
+    await fetch(baseUrl, {
+        method: 'POST',
+        body: JSON.stringify({ description, teacher, title, type }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    loadCourse();
+}
+
+function clearInputs() {
+    titleInput.value = '';
+    descriptionInput.value = '';
+    typeInput.value = '';
+    teacherInput.value = '';
+}
+// window.addEventListener('DOMContentLoaded', loadCourse());
+loadBtn.addEventListener('click', loadCourse);
+addBtn.addEventListener('click', addCourse);
+mainEditBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    editCourse();
+});
