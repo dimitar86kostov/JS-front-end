@@ -33,7 +33,6 @@ function horseRacing(arr) {
 
                 horses.splice(newIndex, 0, rest[0]);
                 console.log(`Trouble for ${rest[0]} - drops one position.`);
-
             }
 
         }
@@ -64,10 +63,8 @@ function horseRacing(arr) {
             console.log(`What a miracle - ${last} becomes first.`);
         }
     }
-
     console.log(horses.join('->'));
     console.log(`The winner is: ${horses[horses.length - 1]}`);
-
 }
 
 horseRacing((['Bella|Alexia|Sugar',
