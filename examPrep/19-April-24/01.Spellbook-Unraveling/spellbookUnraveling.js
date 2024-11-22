@@ -32,8 +32,7 @@ function spellbookUnraveling(params) {
             let word = rest[0];
 
             if (spell.includes(word)) {
-                let reversedWord = word.split('')
-                reversedWord = reversedWord.reverse().join('');
+                let reversedWord = word.split('').reverse().join('');
 
                 let result = spell.replace(word, '');
                 spell = result+reversedWord;
